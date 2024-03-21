@@ -1,27 +1,53 @@
-function knightMoves(start, end, graph=[], moves=[]){
-    graph.push(possibleMoves(start));
-    moves.push(start);
-    let node = possibleMoves(start);
-    node.forEach(item => {
-        if(node===null || node===end) return node;
-        moves.push(item)
-        graph.push(possibleMoves(start));
-        console.log(item);
-    })
-}
-function possibleMoves(position){
-    let graph = [];
-    let moves = [[-2,-1],[-2,1],[2,-1],[2,1],[-1,-2],[1,-2],[1,2],[-1,2]];
-    let n = position[0];
-    let m = position[1];
-    for(let i=0; i<8;i++){
-        let a = moves[i][0]+n;
-        let b = moves[i][1]+m;
-        if(-1<a<9 && -1<b<9){ //ensure move is on the board
-            graph.push([a,b]);
+function square(x,y){
+    return{
+        x,
+        y,
+        pos: [x,y],
+        previous: [],
+        setPrev(pos){
+            this.previous.push(pos);
+        },
+        getPrev(){
+            return this.previous;
+        },
+        possibleMoves(){
+            let moves = [];
+            let offsets = [[-2,-1],[-2,1],[2,-1],[2,1],
+                         [-1,-2],[1,-2],[1,2],[-1,2]];
+
+            for(let i=0; i<8;i++){
+                let a = offsets[i][0]+ this.x;
+                let b = offsets[i][1]+ this.y;
+                if(-1<a<9 && -1<b<9){ //ensure move is on the board
+                    moves.push([a,b]);
+                }
+            }
+            return moves;
         }
     }
-    return graph;
+}
+function knightMoves(start, end, graph=[], moves=[]){
+    let startSq = square(start[0],start[1]);
+    let endSq = square(end[0],end[1]);
+    console.log(startSq.possibleMoves());
+
+    moves.push(startSq.pos);
+    // //base case
+    if(sqEquals(start,end)){
+        return `You made it in ${moves.length} moves with path [${moves}]`;
+    } 
+    // let arr = possibleMoves(start);
+    // arr.forEach(item => {
+    //     return knightMoves(item,end,graph,moves);
+    // })
+    // return moves;
 }
 
-knightMoves([3,3],[7,2]);
+function sqEquals(sq1, sq2){
+    if(sq1.x===sq2.x && sq1.y===sq2.y){
+        return true;
+    }
+    return false
+}
+
+console.log(knightMoves([3,3],[3,3]));
