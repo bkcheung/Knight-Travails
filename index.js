@@ -1,53 +1,42 @@
-function square(x,y){
+function Node(pos,path){
     return{
-        x,
-        y,
-        pos: [x,y],
-        previous: [],
-        setPrev(pos){
-            this.previous.push(pos);
-        },
-        getPrev(){
-            return this.previous;
-        },
-        possibleMoves(){
-            let moves = [];
-            let offsets = [[-2,-1],[-2,1],[2,-1],[2,1],
-                         [-1,-2],[1,-2],[1,2],[-1,2]];
-
-            for(let i=0; i<8;i++){
-                let a = offsets[i][0]+ this.x;
-                let b = offsets[i][1]+ this.y;
-                if(-1<a<9 && -1<b<9){ //ensure move is on the board
-                    moves.push([a,b]);
-                }
-            }
-            return moves;
-        }
+        pos,
+        path
     }
 }
-function knightMoves(start, end, graph=[], moves=[]){
-    let startSq = square(start[0],start[1]);
-    let endSq = square(end[0],end[1]);
-    console.log(startSq.possibleMoves());
-
-    moves.push(startSq.pos);
-    // //base case
-    if(sqEquals(start,end)){
-        return `You made it in ${moves.length} moves with path [${moves}]`;
-    } 
-    // let arr = possibleMoves(start);
-    // arr.forEach(item => {
-    //     return knightMoves(item,end,graph,moves);
-    // })
-    // return moves;
+function knightMoves(start, end){
+    let q = [Node(start, [start])];
+    let currNode = q.shift();
+    while(!arrEquals(currNode.pos, end)){
+        let moves = possibleMoves(currNode.pos);
+        moves.forEach(move => {
+            let node = Node(move, currNode.path.concat([move]));
+            q.push(node);
+        });
+        currNode = q.shift();
+    }
+    console.log(`You made it in ${currNode.path.length} moves with path:`);
+    currNode.path.forEach((pos)=>{
+        console.log(pos);
+    })
 }
-
-function sqEquals(sq1, sq2){
-    if(sq1.x===sq2.x && sq1.y===sq2.y){
+function possibleMoves(pos){
+    let possMoves = [];
+    let moves = [[-2,-1],[-2,1],[2,-1],[2,1],[-1,-2],[1,-2],[1,2],[-1,2]];
+    for(let i=0; i<8;i++){
+        let a = moves[i][0]+pos[0];
+        let b = moves[i][1]+pos[1];
+        if(-1<a<9 && -1<b<9){ //ensure move is on the board
+            possMoves.push([a,b]);
+        }
+    }
+    return possMoves;
+}
+function arrEquals(arr1, arr2){
+    if(arr1[0]===arr2[0] && arr1[1]===arr2[1]){
         return true;
     }
     return false
 }
 
-console.log(knightMoves([3,3],[3,3]));
+knightMoves([3,3],[5,3]);
